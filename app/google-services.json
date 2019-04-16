@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "825495591093",
+    "firebase_url": "https://guc-innovators.firebaseio.com",
+    "project_id": "guc-innovators",
+    "storage_bucket": "guc-innovators.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825495591093:android:d5b8940fb6287b85",
+        "android_client_info": {
+          "package_name": "eg.edu.guc.innovators"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825495591093-l7btoomhh8l9rkuit1eslvh3k01iao74.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "eg.edu.guc.innovators",
+            "certificate_hash": "2a7e02f7ec1a0c62d9b71adf38cc59f4c62cee13"
+          }
+        },
+        {
+          "client_id": "825495591093-qq57s62ntn2r5mk15uhv28ucl287p9qv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuwo_n0xSAJGKQY5E5QpbBdujOPsEppjY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "825495591093-qq57s62ntn2r5mk15uhv28ucl287p9qv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
