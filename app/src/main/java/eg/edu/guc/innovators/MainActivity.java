@@ -1,5 +1,9 @@
 package eg.edu.guc.innovators;
 
+import android.content.Context;
+import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.firebase.FirebaseApp;
@@ -41,26 +47,31 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference waiting;
     DatabaseReference pulseRate;
 
-    Battery bStatus;
-    DriverState ds;
-    ElectricCurrent ec;
-    Pedestrian peds;
-    Speed sp;
-    Temperature t;
-    Indicators ind;
-    Rain des;
-    Waiting w;
-    SeatBelt sb;
-    TrialDuration td;
-    Pulse p;
-
     ArrayList<Car> cars;
+    TextView myNull ;
+    ScrollView myContent;
+    ProgressBar mProgressBar;
+
+    TextView txtSpeed ;
+    TextView current ;
+    TextView seat  ;
+    TextView time ;
+    TextView txtBattery ;
+    TextView pulse ;
+    RelativeLayout left_ind ;
+    RelativeLayout relWaiting ;
+    RelativeLayout right_ind ;
+    RelativeLayout raining;
+    RelativeLayout focus ;
+    RelativeLayout sleep ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v("QueryUtils","onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        cars = new ArrayList<>();
+
         FirebaseApp.initializeApp(this);
         battery = FirebaseDatabase.getInstance().getReference("battery");
         car = FirebaseDatabase.getInstance().getReference("car");
@@ -76,84 +87,49 @@ public class MainActivity extends AppCompatActivity {
         waiting = FirebaseDatabase.getInstance().getReference("waiting");
         pulseRate = FirebaseDatabase.getInstance().getReference("pulseRate");
 
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                callall();
-            }
-        }, 0, 1000);//put here time 1000 milliseconds=1 second
-
+        txtSpeed = (TextView) findViewById(R.id.speed);
+        current = (TextView) findViewById(R.id.current);
+        seat = (TextView) findViewById(R.id.seat);
+        time = (TextView) findViewById(R.id.time);
+        txtBattery = (TextView) findViewById(R.id.battery);
+        pulse = (TextView) findViewById(R.id.pulse);
+        left_ind = (RelativeLayout) findViewById(R.id.left_ind);
+        relWaiting = (RelativeLayout) findViewById(R.id.waiting);
+        right_ind = (RelativeLayout) findViewById(R.id.right_ind);
+        raining= (RelativeLayout) findViewById(R.id.raining);
+        focus = (RelativeLayout) findViewById(R.id.focus);
+        sleep = (RelativeLayout) findViewById(R.id.sleep);
     }
 
-        public void callall(){
-            Object[] my_data =new Object[14];
-            my_data[0]=car;
-            my_data[1]=peds.getNumberOfPeople();
-            my_data[2]=sp.getSpeed();
-            my_data[3]=ec.getCurrent();
-            my_data[4]=sb.isOn();
-            my_data[5]=ind.isLeft();
-            my_data[6]=w.isWaiting();
-            my_data[7]=ind.isRight();
-            my_data[8]=td.getMinutes();
-            my_data[9]=des.isRainy();
-            my_data[10]=bStatus.getStatus();
-            my_data[11]=ds.isNotFocused();
-            my_data[12]=p.getPulseRate();
-            my_data[13]=ds.isAwake();
-            loadall(my_data);
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+        cars = new ArrayList<>();
+        myContent = (ScrollView) findViewById(R.id.MyContent);
+        myNull =(TextView)findViewById(R.id.textView);
+        mProgressBar =(ProgressBar)findViewById(R.id.progressBar);
+
+        myNull.setVisibility(View.GONE);
+        myContent.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        ConnectivityManager connMgr=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo =connMgr.getActiveNetworkInfo();
+        if(networkInfo!=null&&networkInfo.isConnected()) {
+            onStartApp();
+            Log.v("QueryUtils", "initLoader");
+            myNull.setVisibility(View.GONE);
+            myContent.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.GONE);
+        }else{
+            myNull.setText("no internet connection");
+            myNull.setVisibility(View.VISIBLE);
+            myContent.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.GONE);
         }
 
-        public void loadall(Object[] data){
-            createCars((ArrayList<Car>)data[0]);
-            updatePedestriansNumber((int)data[1]);
-            TextView speed = (TextView) findViewById(R.id.speed);
-            TextView current = (TextView) findViewById(R.id.current);
-            TextView seat = (TextView) findViewById(R.id.seat);
-            TextView time = (TextView) findViewById(R.id.time);
-            TextView battery = (TextView) findViewById(R.id.battery);
-            TextView pulse = (TextView) findViewById(R.id.pulse);
-            RelativeLayout left_ind = (RelativeLayout) findViewById(R.id.left_ind);
-            RelativeLayout waiting = (RelativeLayout) findViewById(R.id.waiting);
-            RelativeLayout right_ind = (RelativeLayout) findViewById(R.id.right_ind);
-            RelativeLayout raining= (RelativeLayout) findViewById(R.id.raining);
-            RelativeLayout focus = (RelativeLayout) findViewById(R.id.focus);
-            RelativeLayout sleep = (RelativeLayout) findViewById(R.id.sleep);
-            speed.setText(data[2]+" Km/H");
-            current.setText(data[3]+" A");
-            if((boolean)data[4])
-                seat.setText("Connected");
-            else
-                seat.setText("Not Connected");
-            if((boolean)data[5])
-                left_ind.setBackgroundResource(R.drawable.left_yellow);
-            else
-                left_ind.setBackgroundResource(R.drawable.left_black);
-            if((boolean)data[6])
-                waiting.setBackgroundResource(R.drawable.waiting);
-            else
-                waiting.setBackgroundResource(R.drawable.not_waiting);
-            if((boolean)data[7])
-                right_ind.setBackgroundResource(R.drawable.right_yellow);
-            else
-                right_ind.setBackgroundResource(R.drawable.right_black);
-            time.setText(data[8]+" Minute");
-            if((boolean)data[9])
-                raining.setBackgroundResource(R.drawable.raining);
-            else
-                raining.setBackgroundResource(R.drawable.not_raining);
-            battery.setText(data[10]+"");
-            if(!(boolean)data[11])
-                focus.setBackgroundResource(R.drawable.focus);
-            else
-                focus.setBackgroundResource(R.drawable.not_focus);
-            pulse.setText(data[12]+" Pulse/Mn");
-            if(!(boolean)data[13])
-                sleep.setBackgroundResource(R.drawable.sleep);
-            else
-                sleep.setBackgroundResource(R.drawable.not_sleep);
-        }
-
+    }
         public void updatePedestriansNumber(int i){
             TextView L = (TextView) findViewById(R.id.pedestrians);
             L.setText("");
@@ -205,13 +181,16 @@ public class MainActivity extends AppCompatActivity {
             listView.requestLayout();
         }
 
-    protected void onStart(){
+    protected void onStartApp(){
+        Log.v(TAG,"on start");
         super.onStart();
         battery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               bStatus = dataSnapshot.getValue(Battery.class);
+                Log.d(TAG, "battery");
+               String bStatus = dataSnapshot.child("battery0").getValue(Battery.class).getStatus();
                 Log.d(TAG, "Value is: " + bStatus);
+                txtBattery.setText(bStatus);
             }
 
             @Override
@@ -224,11 +203,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 cars.clear();
+                int i =1;
                 for(DataSnapshot carsSnapshot : dataSnapshot.getChildren()){
-                    Car c = dataSnapshot.getValue(Car.class);
+                    Car c = carsSnapshot.getValue(Car.class);
+                    c.setId_number(i);
                     cars.add(c);
                     Log.d(TAG, "Value is: " + c);
+                    i++;
                 }
+                createCars(cars);
+
             }
 
             @Override
@@ -240,8 +224,17 @@ public class MainActivity extends AppCompatActivity {
         driverState.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ds = dataSnapshot.getValue(DriverState.class);
-                Log.d(TAG, "Value is: " + ds);
+                boolean awake = dataSnapshot.child("DriverState0").getValue(DriverState.class).isAwake();
+                boolean isfocus = dataSnapshot.child("DriverState0").getValue(DriverState.class).isNotFocused();
+                Log.d(TAG, "Value is: " + awake +" "+isfocus );
+                if(!isfocus)
+                    focus.setBackgroundResource(R.drawable.focus);
+                else
+                    focus.setBackgroundResource(R.drawable.not_focus);
+                if(!awake)
+                    sleep.setBackgroundResource(R.drawable.sleep);
+                else
+                    sleep.setBackgroundResource(R.drawable.not_sleep);
             }
 
             @Override
@@ -253,8 +246,9 @@ public class MainActivity extends AppCompatActivity {
         electricCurrent.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ec = dataSnapshot.getValue(ElectricCurrent.class);
+                double ec = dataSnapshot.child("ElectricCurrent0").getValue(ElectricCurrent.class).getCurrent();
                 Log.d(TAG, "Value is: " + ec);
+                current.setText(ec+" A");
             }
 
             @Override
@@ -266,8 +260,10 @@ public class MainActivity extends AppCompatActivity {
         pedestrian.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                peds = dataSnapshot.getValue(Pedestrian.class);
+                int peds = dataSnapshot.child("Pedestrian").getValue(Pedestrian.class).getNumberOfPeople();
                 Log.d(TAG, "Value is: " + peds);
+                updatePedestriansNumber(peds);
+
             }
 
             @Override
@@ -279,21 +275,9 @@ public class MainActivity extends AppCompatActivity {
         speed.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                sp = dataSnapshot.getValue(Speed.class);
+                double sp = dataSnapshot.child("Speed").getValue(Speed.class).getSpeed();
                 Log.d(TAG, "Value is: " + sp);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w(TAG, "Failed to read value.",databaseError.toException());
-            }
-        });
-
-        temperature.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                t = dataSnapshot.getValue(Temperature.class);
-                Log.d(TAG, "Value is: " + t);
+                txtSpeed.setText(sp+" Km/H");
             }
 
             @Override
@@ -305,8 +289,17 @@ public class MainActivity extends AppCompatActivity {
         indicators.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ind = dataSnapshot.getValue(Indicators.class);
-                Log.d(TAG, "Value is: " + ind);
+                boolean indLeft = dataSnapshot.child("Indicators").getValue(Indicators.class).isLeft();
+                boolean indRight = dataSnapshot.child("Indicators").getValue(Indicators.class).isRight();
+                Log.d(TAG, "Value is: " + indLeft+" "+indRight);
+                if(indLeft)
+                    left_ind.setBackgroundResource(R.drawable.left_yellow);
+                else
+                    left_ind.setBackgroundResource(R.drawable.left_black);
+                if(indRight)
+                    right_ind.setBackgroundResource(R.drawable.right_yellow);
+                else
+                    right_ind.setBackgroundResource(R.drawable.right_black);
             }
 
             @Override
@@ -318,8 +311,14 @@ public class MainActivity extends AppCompatActivity {
         rain.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                des = dataSnapshot.getValue(Rain.class);
+                boolean des = dataSnapshot.child("Rain0").getValue(Rain.class).isRainy();
                 Log.d(TAG, "Value is: " + des);
+                if(des)
+                    raining.setBackgroundResource(R.drawable.raining);
+                else
+                    raining.setBackgroundResource(R.drawable.not_raining);
+
+
             }
 
             @Override
@@ -330,8 +329,12 @@ public class MainActivity extends AppCompatActivity {
         waiting.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                w = dataSnapshot.getValue(Waiting.class);
+                boolean w = dataSnapshot.child("Waiting0").getValue(Waiting.class).isWaiting();
                 Log.d(TAG, "Value is: " + w);
+                if(w)
+                    relWaiting.setBackgroundResource(R.drawable.waiting);
+                else
+                    relWaiting.setBackgroundResource(R.drawable.not_waiting);
             }
 
             @Override
@@ -343,8 +346,12 @@ public class MainActivity extends AppCompatActivity {
         seatbelt.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                sb = dataSnapshot.getValue(SeatBelt.class);
+                boolean sb = dataSnapshot.child("SeatBelt0").getValue(SeatBelt.class).isOn();
                 Log.d(TAG, "Value is: " + sb);
+                if(sb)
+                    seat.setText("Connected");
+                else
+                    seat.setText("Not Connected");
             }
 
             @Override
@@ -356,8 +363,9 @@ public class MainActivity extends AppCompatActivity {
         duration.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                td = dataSnapshot.getValue(TrialDuration.class);
+                double td = dataSnapshot.child("TrialDuration0").getValue(TrialDuration.class).getMinutes();
                 Log.d(TAG, "Value is: " + td);
+                time.setText(td+" Minute");
             }
 
             @Override
@@ -369,8 +377,9 @@ public class MainActivity extends AppCompatActivity {
         pulseRate.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                p = dataSnapshot.getValue(Pulse.class);
+                int p = dataSnapshot.child("Pulse0").getValue(Pulse.class).getPulseRate();
                 Log.d(TAG, "Value is: " + p);
+                pulse.setText(p+" Pulse/Mn");
             }
 
             @Override
@@ -378,6 +387,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.w(TAG, "Failed to read value.",databaseError.toException());
             }
         });
+
+        Log.v(TAG,"end of start");
+
     }
 
 }

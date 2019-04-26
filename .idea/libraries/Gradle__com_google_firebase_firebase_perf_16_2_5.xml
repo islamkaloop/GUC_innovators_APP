@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.google.firebase:firebase-perf-16.2.5">
+    <CLASSES>
+      <root url="file://D:/miscellany/gallery/Extensions/gradle-4.9/caches/transforms-1/files-1.1/firebase-perf-16.2.5.aar/a4b013e00fe2a337c583cad0af5e6701/res" />
+      <root url="jar://D:/miscellany/gallery/Extensions/gradle-4.9/caches/transforms-1/files-1.1/firebase-perf-16.2.5.aar/a4b013e00fe2a337c583cad0af5e6701/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://D:/miscellany/gallery/Extensions/gradle-4.9/caches/modules-2/files-2.1/com.google.firebase/firebase-perf/16.2.5/c2ba3eb116c557054cfd665c073056eb51f79192/firebase-perf-16.2.5-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

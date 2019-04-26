@@ -4,8 +4,12 @@ public class Battery  {
 
     private String status;
 
-    public Battery(String status){
+    public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Battery(){
+
     }
 
     public String getStatus() {

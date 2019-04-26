@@ -4,8 +4,12 @@ public class ElectricCurrent{
 
     private double current;
 
-    public ElectricCurrent(double current){
+    public void setCurrent(double current) {
         this.current = current;
+    }
+
+    public ElectricCurrent(){
+
     }
 
     public double getCurrent(){

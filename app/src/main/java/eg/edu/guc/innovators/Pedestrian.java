@@ -4,8 +4,12 @@ public class Pedestrian{
 
     private int numberOfPeople;
 
-    public Pedestrian(int numberOfPeople){
+    public void setNumberOfPeople(int numberOfPeople) {
         this.numberOfPeople = numberOfPeople;
+    }
+
+    public Pedestrian(){
+
     }
 
     public int getNumberOfPeople() {

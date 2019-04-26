@@ -4,8 +4,12 @@ public class Rain {
 
     private boolean rainy;
 
-    public Rain( boolean rainy){
+    public void setRainy(boolean rainy) {
         this.rainy = rainy;
+    }
+
+    public Rain(){
+
     }
 
     public boolean isRainy() {

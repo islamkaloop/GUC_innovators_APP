@@ -4,8 +4,12 @@ public class Waiting{
 
     private boolean waiting;
 
-    public Waiting(boolean waiting){
+    public void setWaiting(boolean waiting) {
         this.waiting = waiting;
+    }
+
+    public Waiting(){
+
     }
 
     public boolean isWaiting() {

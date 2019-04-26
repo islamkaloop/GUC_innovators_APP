@@ -3,6 +3,7 @@ package eg.edu.guc.innovators;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ public class CarAdapter extends ArrayAdapter {
         TextView id=(TextView) ViewList.findViewById(R.id.car_id);
         TextView destance=(TextView)ViewList.findViewById(R.id.destance);
         TextView velocity=(TextView)ViewList.findViewById(R.id.velocity);
-        id.setText(myCar.getId_number());
+        id.setText(myCar.getId_number()+"");
         destance.setText(myCar.getDistance()+"");
         velocity.setText(myCar.getVelocity()+"");
         return ViewList;

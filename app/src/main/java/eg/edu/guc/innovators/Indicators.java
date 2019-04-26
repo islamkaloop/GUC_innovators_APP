@@ -5,9 +5,16 @@ public class Indicators {
     private boolean left;
     private boolean right;
 
-    public Indicators( boolean left, boolean right){
+    public void setLeft(boolean left) {
         this.left = left;
+    }
+
+    public void setRight(boolean right) {
         this.right = right;
+    }
+
+    public Indicators( ){
+
     }
 
     public boolean isLeft() {

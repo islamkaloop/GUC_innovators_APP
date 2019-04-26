@@ -4,8 +4,8 @@ public class Pulse {
 
     private int pulseRate;
 
-    public Pulse(int pulseRate){
-        this.pulseRate = pulseRate;
+    public Pulse(){
+
     }
 
     public int getPulseRate(){

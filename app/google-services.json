@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "825495591093-kavpifgjvv7t25hj8uu84hbncb05j4ma.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "eg.edu.guc.innovators",
+            "certificate_hash": "363420115d69cd0e97202fdbba778528469a7875"
+          }
+        },
+        {
           "client_id": "825495591093-qq57s62ntn2r5mk15uhv28ucl287p9qv.apps.googleusercontent.com",
           "client_type": 3
         }
